@@ -6,4 +6,15 @@ export declare class TodolistService {
     constructor(todoRepository: Repository<TodoEntity>);
     getAllTasks(): Promise<TodoEntity[]>;
     createTask(data: CreateDto): Promise<CreateDto & TodoEntity>;
+    deleteTask(id: number): Promise<{
+        status: number;
+        message: string;
+    }>;
+    updateTask(id: number, updateCreateDto: {
+        title?: string;
+        description?: string;
+    }): Promise<{
+        status: number;
+        message: string;
+    }>;
 }

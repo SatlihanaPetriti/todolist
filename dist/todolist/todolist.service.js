@@ -41,6 +41,39 @@ let TodolistService = class TodolistService {
             throw new common_1.HttpException('We could not create a new task', common_2.HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    async deleteTask(id) {
+        try {
+            const task = await this.todoRepository.findOne({ where: { id } });
+            if (!task) {
+                throw new common_1.HttpException(`Task with ID ${id} not found`, common_2.HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            await this.todoRepository.delete(id);
+            return {
+                status: 200,
+                message: `Task with ID ${id} deleted successfully`,
+            };
+        }
+        catch (error) {
+            throw new common_1.HttpException(`Could not delete task with ID ${id}`, common_2.HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    async updateTask(id, updateCreateDto) {
+        try {
+            const task = await this.todoRepository.findOne({ where: { id } });
+            if (!task) {
+                throw new common_1.HttpException(`Task with ID ${id} not found`, common_2.HttpStatus.NOT_FOUND);
+            }
+            await this.todoRepository.update(id, { title: updateCreateDto.title, description: updateCreateDto.description
+            });
+            return {
+                status: 200,
+                message: `Task with ID ${id} updated successfully`,
+            };
+        }
+        catch (error) {
+            throw new common_1.HttpException(`Could not delete task with ID ${id}`, common_2.HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 };
 exports.TodolistService = TodolistService;
 exports.TodolistService = TodolistService = __decorate([

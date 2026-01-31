@@ -10,7 +10,7 @@ import { TodoEntity } from "./todolist/Entity/todo.entity";
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: 'root',
+      password: 'Inna1998',
       database: 'todolist',
       entities: [TodoEntity],
       synchronize: true,

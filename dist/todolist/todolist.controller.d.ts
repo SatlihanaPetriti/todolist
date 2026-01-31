@@ -5,4 +5,15 @@ export declare class TodolistController {
     constructor(todoService: TodolistService);
     getAllTasks(): Promise<import("./Entity/todo.entity").TodoEntity[]>;
     createTodo(bodyPara: CreateDto): Promise<CreateDto & import("./Entity/todo.entity").TodoEntity>;
+    deleteTask(id: number): Promise<{
+        status: number;
+        message: string;
+    }>;
+    updateTask(id: number, updateCreateDto: {
+        title?: string;
+        description?: string;
+    }): Promise<{
+        status: number;
+        message: string;
+    }>;
 }

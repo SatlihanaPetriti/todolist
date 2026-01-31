@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, Delete, Put, ParseIntPipe } from '@nestjs/common';
 import { TodolistService } from "./todolist.service";
 import { CreateDto } from './dto/create.dto';
 
@@ -15,6 +15,14 @@ export class TodolistController {
     public async createTodo(@Body() bodyPara: CreateDto) {
         return this.todoService.createTask(bodyPara);
     }
-
-
+    @Delete(':id')
+    public async deleteTask(@Param('id') id: number) {
+        return await this.todoService.deleteTask(id);
+    }
+    @Put(':id')
+    public async updateTask(@Param('id', ParseIntPipe) id: number,
+    @Body() updateCreateDto: { title?: string; description?: string }
+    ) {
+        return await this.todoService.updateTask(id, updateCreateDto);
+    }
 }

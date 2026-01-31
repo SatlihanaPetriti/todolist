@@ -27,6 +27,12 @@ let TodolistController = class TodolistController {
     async createTodo(bodyPara) {
         return this.todoService.createTask(bodyPara);
     }
+    async deleteTask(id) {
+        return await this.todoService.deleteTask(id);
+    }
+    async updateTask(id, updateCreateDto) {
+        return await this.todoService.updateTask(id, updateCreateDto);
+    }
 };
 exports.TodolistController = TodolistController;
 __decorate([
@@ -42,6 +48,21 @@ __decorate([
     __metadata("design:paramtypes", [create_dto_1.CreateDto]),
     __metadata("design:returntype", Promise)
 ], TodolistController.prototype, "createTodo", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], TodolistController.prototype, "deleteTask", null);
+__decorate([
+    (0, common_1.Put)(':id'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:returntype", Promise)
+], TodolistController.prototype, "updateTask", null);
 exports.TodolistController = TodolistController = __decorate([
     (0, common_1.Controller)('todolist'),
     __metadata("design:paramtypes", [todolist_service_1.TodolistService])
