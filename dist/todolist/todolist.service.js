@@ -18,14 +18,24 @@ const common_2 = require("@nestjs/common");
 const todo_entity_1 = require("./Entity/todo.entity");
 const typeorm_1 = require("typeorm");
 const typeorm_2 = require("@nestjs/typeorm");
+const cache_manager_1 = require("@nestjs/cache-manager");
 let TodolistService = class TodolistService {
     todoRepository;
-    constructor(todoRepository) {
+    cacheManager;
+    constructor(todoRepository, cacheManager) {
         this.todoRepository = todoRepository;
+        this.cacheManager = cacheManager;
     }
     async getAllTasks() {
         try {
+            const cachedTasks = await this.cacheManager.get('tasks');
+            if (cachedTasks) {
+                console.log('Data from Redis');
+                return cachedTasks;
+            }
+            console.log('Data from MySQL');
             const result = await this.todoRepository.find();
+            await this.cacheManager.set('tasks', result, 60000);
             return result;
         }
         catch (error) {
@@ -35,6 +45,7 @@ let TodolistService = class TodolistService {
     async createTask(data) {
         try {
             const result = await this.todoRepository.save(data);
+            await this.cacheManager.del('tasks');
             return result;
         }
         catch (error) {
@@ -45,7 +56,7 @@ let TodolistService = class TodolistService {
         try {
             const task = await this.todoRepository.findOne({ where: { id } });
             if (!task) {
-                throw new common_1.HttpException(`Task with ID ${id} not found`, common_2.HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new common_1.HttpException(`Task with ID ${id} not found`, common_2.HttpStatus.NOT_FOUND);
             }
             await this.todoRepository.delete(id);
             return {
@@ -57,21 +68,22 @@ let TodolistService = class TodolistService {
             throw new common_1.HttpException(`Could not delete task with ID ${id}`, common_2.HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    async updateTask(id, updateCreateDto) {
+    async updateTask(id, data) {
+        const task = await this.todoRepository.findOne({ where: { id } });
+        if (!task) {
+            throw new common_1.HttpException(`Task with ID ${id} not found`, common_2.HttpStatus.NOT_FOUND);
+        }
         try {
-            const task = await this.todoRepository.findOne({ where: { id } });
-            if (!task) {
-                throw new common_1.HttpException(`Task with ID ${id} not found`, common_2.HttpStatus.NOT_FOUND);
-            }
-            await this.todoRepository.update(id, { title: updateCreateDto.title, description: updateCreateDto.description
-            });
+            await this.todoRepository.update(id, data);
+            await this.cacheManager.del('tasks');
             return {
                 status: 200,
                 message: `Task with ID ${id} updated successfully`,
+                result: { id, ...data },
             };
         }
         catch (error) {
-            throw new common_1.HttpException(`Could not delete task with ID ${id}`, common_2.HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new common_1.HttpException(`Could not update task with ID ${id}`, common_2.HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 };
@@ -79,6 +91,7 @@ exports.TodolistService = TodolistService;
 exports.TodolistService = TodolistService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_2.InjectRepository)(todo_entity_1.TodoEntity)),
-    __metadata("design:paramtypes", [typeorm_1.Repository])
+    __param(1, (0, common_1.Inject)(cache_manager_1.CACHE_MANAGER)),
+    __metadata("design:paramtypes", [typeorm_1.Repository, Object])
 ], TodolistService);
 //# sourceMappingURL=todolist.service.js.map

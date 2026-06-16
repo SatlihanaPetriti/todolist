@@ -1,20 +1,24 @@
 import { TodoEntity } from './Entity/todo.entity';
 import { Repository } from 'typeorm';
 import { CreateDto } from './dto/create.dto';
+import { Cache } from 'cache-manager';
 export declare class TodolistService {
     private readonly todoRepository;
-    constructor(todoRepository: Repository<TodoEntity>);
-    getAllTasks(): Promise<TodoEntity[]>;
+    private readonly cacheManager;
+    constructor(todoRepository: Repository<TodoEntity>, cacheManager: Cache);
+    getAllTasks(): Promise<{}>;
     createTask(data: CreateDto): Promise<CreateDto & TodoEntity>;
     deleteTask(id: number): Promise<{
         status: number;
         message: string;
     }>;
-    updateTask(id: number, updateCreateDto: {
-        title?: string;
-        description?: string;
-    }): Promise<{
+    updateTask(id: number, data: CreateDto): Promise<{
         status: number;
         message: string;
+        result: {
+            title: string;
+            description: string;
+            id: number;
+        };
     }>;
 }

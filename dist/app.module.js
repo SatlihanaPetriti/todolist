@@ -11,6 +11,8 @@ const common_1 = require("@nestjs/common");
 const todolist_module_1 = require("./todolist/todolist.module");
 const typeorm_1 = require("@nestjs/typeorm");
 const todo_entity_1 = require("./todolist/Entity/todo.entity");
+const cache_manager_1 = require("@nestjs/cache-manager");
+const redis_1 = require("@keyv/redis");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -27,10 +29,15 @@ exports.AppModule = AppModule = __decorate([
                 entities: [todo_entity_1.TodoEntity],
                 synchronize: true,
             }),
-            todolist_module_1.TodolistModule
+            cache_manager_1.CacheModule.register({
+                isGlobal: true,
+                stores: [
+                    new redis_1.default('redis://localhost:6379'),
+                ],
+                ttl: 5000,
+            }),
+            todolist_module_1.TodolistModule,
         ],
-        controllers: [],
-        providers: [],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

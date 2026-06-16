@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TodolistModule } from './todolist/todolist.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TodoEntity } from "./todolist/Entity/todo.entity";
+import { TodoEntity } from './todolist/Entity/todo.entity';
+
+import { CacheModule } from '@nestjs/cache-manager';
+import KeyvRedis from '@keyv/redis';
 
 @Module({
   imports: [
@@ -14,9 +17,17 @@ import { TodoEntity } from "./todolist/Entity/todo.entity";
       database: 'todolist',
       entities: [TodoEntity],
       synchronize: true,
-    })
-    , TodolistModule],
-  controllers: [],
-  providers: [],
+    }),
+
+    CacheModule.register({
+      isGlobal: true,
+      stores: [
+        new KeyvRedis('redis://localhost:6379'),
+      ],
+      ttl: 5000,
+    }),
+
+    TodolistModule,
+  ],
 })
 export class AppModule { }

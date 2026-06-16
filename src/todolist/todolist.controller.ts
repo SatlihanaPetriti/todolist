@@ -8,7 +8,7 @@ export class TodolistController {
 
     @Get('all')
     public async getAllTasks() {
-        return await this.todoService.getAllTasks();
+        return this.todoService.getAllTasks();
     }
 
     @Post('create')
@@ -16,13 +16,12 @@ export class TodolistController {
         return this.todoService.createTask(bodyPara);
     }
     @Delete(':id')
-    public async deleteTask(@Param('id') id: number) {
-        return await this.todoService.deleteTask(id);
+    public async deleteTask(@Param('id', ParseIntPipe) id: number) {
+        return this.todoService.deleteTask(id);
     }
+
     @Put(':id')
-    public async updateTask(@Param('id', ParseIntPipe) id: number,
-    @Body() updateCreateDto: { title?: string; description?: string }
-    ) {
-        return await this.todoService.updateTask(id, updateCreateDto);
+    public async updateTask(@Param('id', ParseIntPipe) id: number, @Body() data: CreateDto) {
+        return  this.todoService.updateTask(id, data);
     }
 }

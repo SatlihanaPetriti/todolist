@@ -22,16 +22,16 @@ let TodolistController = class TodolistController {
         this.todoService = todoService;
     }
     async getAllTasks() {
-        return await this.todoService.getAllTasks();
+        return this.todoService.getAllTasks();
     }
     async createTodo(bodyPara) {
         return this.todoService.createTask(bodyPara);
     }
     async deleteTask(id) {
-        return await this.todoService.deleteTask(id);
+        return this.todoService.deleteTask(id);
     }
-    async updateTask(id, updateCreateDto) {
-        return await this.todoService.updateTask(id, updateCreateDto);
+    async updateTask(id, data) {
+        return this.todoService.updateTask(id, data);
     }
 };
 exports.TodolistController = TodolistController;
@@ -50,7 +50,7 @@ __decorate([
 ], TodolistController.prototype, "createTodo", null);
 __decorate([
     (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
@@ -60,7 +60,7 @@ __decorate([
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:paramtypes", [Number, create_dto_1.CreateDto]),
     __metadata("design:returntype", Promise)
 ], TodolistController.prototype, "updateTask", null);
 exports.TodolistController = TodolistController = __decorate([
