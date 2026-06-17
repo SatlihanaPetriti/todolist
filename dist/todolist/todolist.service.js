@@ -48,6 +48,7 @@ let TodolistService = class TodolistService {
         const cachedTask = await this.cacheManager.get(cacheKey);
         if (cachedTask) {
             console.log(`Redis: hit ${cacheKey}`);
+            console.log(cachedTask);
             return cachedTask;
         }
         console.log(`Redis: miss ${cacheKey}`);
@@ -56,7 +57,9 @@ let TodolistService = class TodolistService {
             throw new common_1.HttpException(`Task with ID ${id} not found`, common_2.HttpStatus.NOT_FOUND);
         }
         await this.cacheManager.set(cacheKey, task, 60000);
+        const checkCache = await this.cacheManager.get(cacheKey);
         console.log(`Redis: ${cacheKey} cached`);
+        console.log('Redis check after set:', checkCache);
         return task;
     }
     async createTask(data) {

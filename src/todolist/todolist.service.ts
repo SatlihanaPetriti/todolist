@@ -38,12 +38,15 @@ export class TodolistService {
         const cacheKey = `task:${id}`;
 
         const cachedTask = await this.cacheManager.get(cacheKey);
+
         if (cachedTask) {
             console.log(`Redis: hit ${cacheKey}`);
+            console.log(cachedTask);
             return cachedTask;
         }
 
         console.log(`Redis: miss ${cacheKey}`);
+
         const task = await this.todoRepository.findOne({ where: { id } });
 
         if (!task) {
@@ -54,7 +57,12 @@ export class TodolistService {
         }
 
         await this.cacheManager.set(cacheKey, task, 60000);
+
+        const checkCache = await this.cacheManager.get(cacheKey);
+
         console.log(`Redis: ${cacheKey} cached`);
+        console.log('Redis check after set:', checkCache);
+
         return task;
     }
 
