@@ -4,6 +4,7 @@ export declare class TodolistController {
     private readonly todoService;
     constructor(todoService: TodolistService);
     getAllTasks(): Promise<{}>;
+    getTaskById(id: number): Promise<{}>;
     createTodo(bodyPara: CreateDto): Promise<CreateDto & import("./Entity/todo.entity").TodoEntity>;
     deleteTask(id: number): Promise<{
         status: number;

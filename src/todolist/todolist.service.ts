@@ -23,15 +23,39 @@ export class TodolistService {
             const cachedTasks = await this.cacheManager.get('tasks');
             if (cachedTasks) {
                 console.log('Data from Redis');
+                console.log(cachedTasks);
                 return cachedTasks;
             }
             console.log('Data from MySQL');
             const result = await this.todoRepository.find();
-            await this.cacheManager.set('tasks', result, 60000);
+            await this.cacheManager.set('tasks', result, 300000);
             return result;
         } catch (error) {
-            throw new HttpException('We could not found date', HttpStatus.NOT_FOUND);
+            throw new HttpException('We could not found data', HttpStatus.NOT_FOUND);
         }
+    }
+    public async getTaskById(id: number) {
+        const cacheKey = `task:${id}`;
+
+        const cachedTask = await this.cacheManager.get(cacheKey);
+        if (cachedTask) {
+            console.log(`Redis: hit ${cacheKey}`);
+            return cachedTask;
+        }
+
+        console.log(`Redis: miss ${cacheKey}`);
+        const task = await this.todoRepository.findOne({ where: { id } });
+
+        if (!task) {
+            throw new HttpException(
+                `Task with ID ${id} not found`,
+                HttpStatus.NOT_FOUND,
+            );
+        }
+
+        await this.cacheManager.set(cacheKey, task, 60000);
+        console.log(`Redis: ${cacheKey} cached`);
+        return task;
     }
 
     public async createTask(data: CreateDto) {
@@ -42,10 +66,7 @@ export class TodolistService {
 
             return result;
         } catch (error) {
-            throw new HttpException(
-                'We could not create a new task',
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
+            throw new HttpException('We could not create a new task', HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -61,6 +82,8 @@ export class TodolistService {
             }
 
             await this.todoRepository.delete(id);
+            await this.cacheManager.del(`task:${id}`);
+            await this.cacheManager.del('tasks');
 
             return {
                 status: 200,
@@ -87,6 +110,7 @@ export class TodolistService {
         try {
             await this.todoRepository.update(id, data);
 
+            await this.cacheManager.del(`task:${id}`);
             await this.cacheManager.del('tasks');
 
             return {

@@ -11,6 +11,11 @@ export class TodolistController {
         return this.todoService.getAllTasks();
     }
 
+    @Get(':id')
+    public async getTaskById(@Param('id', ParseIntPipe) id: number) {
+        return this.todoService.getTaskById(id);
+    }
+
     @Post('create')
     public async createTodo(@Body() bodyPara: CreateDto) {
         return this.todoService.createTask(bodyPara);
@@ -22,6 +27,7 @@ export class TodolistController {
 
     @Put(':id')
     public async updateTask(@Param('id', ParseIntPipe) id: number, @Body() data: CreateDto) {
-        return  this.todoService.updateTask(id, data);
+        return this.todoService.updateTask(id, data);
     }
+
 }

@@ -24,6 +24,9 @@ let TodolistController = class TodolistController {
     async getAllTasks() {
         return this.todoService.getAllTasks();
     }
+    async getTaskById(id) {
+        return this.todoService.getTaskById(id);
+    }
     async createTodo(bodyPara) {
         return this.todoService.createTask(bodyPara);
     }
@@ -41,6 +44,13 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], TodolistController.prototype, "getAllTasks", null);
+__decorate([
+    (0, common_1.Get)(':id'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], TodolistController.prototype, "getTaskById", null);
 __decorate([
     (0, common_1.Post)('create'),
     __param(0, (0, common_1.Body)()),

@@ -7,6 +7,7 @@ export declare class TodolistService {
     private readonly cacheManager;
     constructor(todoRepository: Repository<TodoEntity>, cacheManager: Cache);
     getAllTasks(): Promise<{}>;
+    getTaskById(id: number): Promise<{}>;
     createTask(data: CreateDto): Promise<CreateDto & TodoEntity>;
     deleteTask(id: number): Promise<{
         status: number;

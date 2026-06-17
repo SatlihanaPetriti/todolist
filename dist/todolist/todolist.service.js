@@ -31,16 +31,33 @@ let TodolistService = class TodolistService {
             const cachedTasks = await this.cacheManager.get('tasks');
             if (cachedTasks) {
                 console.log('Data from Redis');
+                console.log(cachedTasks);
                 return cachedTasks;
             }
             console.log('Data from MySQL');
             const result = await this.todoRepository.find();
-            await this.cacheManager.set('tasks', result, 60000);
+            await this.cacheManager.set('tasks', result, 300000);
             return result;
         }
         catch (error) {
-            throw new common_1.HttpException('We could not found date', common_2.HttpStatus.NOT_FOUND);
+            throw new common_1.HttpException('We could not found data', common_2.HttpStatus.NOT_FOUND);
         }
+    }
+    async getTaskById(id) {
+        const cacheKey = `task:${id}`;
+        const cachedTask = await this.cacheManager.get(cacheKey);
+        if (cachedTask) {
+            console.log(`Redis: hit ${cacheKey}`);
+            return cachedTask;
+        }
+        console.log(`Redis: miss ${cacheKey}`);
+        const task = await this.todoRepository.findOne({ where: { id } });
+        if (!task) {
+            throw new common_1.HttpException(`Task with ID ${id} not found`, common_2.HttpStatus.NOT_FOUND);
+        }
+        await this.cacheManager.set(cacheKey, task, 60000);
+        console.log(`Redis: ${cacheKey} cached`);
+        return task;
     }
     async createTask(data) {
         try {
@@ -59,6 +76,8 @@ let TodolistService = class TodolistService {
                 throw new common_1.HttpException(`Task with ID ${id} not found`, common_2.HttpStatus.NOT_FOUND);
             }
             await this.todoRepository.delete(id);
+            await this.cacheManager.del(`task:${id}`);
+            await this.cacheManager.del('tasks');
             return {
                 status: 200,
                 message: `Task with ID ${id} deleted successfully`,
@@ -75,6 +94,7 @@ let TodolistService = class TodolistService {
         }
         try {
             await this.todoRepository.update(id, data);
+            await this.cacheManager.del(`task:${id}`);
             await this.cacheManager.del('tasks');
             return {
                 status: 200,
