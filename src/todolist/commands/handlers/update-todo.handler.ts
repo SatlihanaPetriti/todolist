@@ -27,13 +27,10 @@ export class UpdateTodoHandler {
         if (!task) {
             throw new NotFoundException(`Task with ID ${id} not found`);
         }
-
         try {
             await this.todoRepository.update(id, updateDto);
-
             await this.cacheManager.del(`task:${id}`);
             await this.cacheManager.del('tasks');
-
             return {
                 status: 200,
                 message: `Task with ID ${id} updated successfully`,
