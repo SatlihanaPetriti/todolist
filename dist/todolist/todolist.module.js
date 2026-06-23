@@ -12,14 +12,25 @@ const todolist_controller_1 = require("./todolist.controller");
 const todolist_service_1 = require("./todolist.service");
 const typeorm_1 = require("@nestjs/typeorm");
 const todo_entity_1 = require("./Entity/todo.entity");
+const cqrs_1 = require("@nestjs/cqrs");
+const create_todo_handler_1 = require("./commands/handlers/create-todo.handler");
+const CommandHandlers = [
+    create_todo_handler_1.CreateTodoHandler,
+];
 let TodolistModule = class TodolistModule {
 };
 exports.TodolistModule = TodolistModule;
 exports.TodolistModule = TodolistModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([todo_entity_1.TodoEntity])],
+        imports: [
+            cqrs_1.CqrsModule,
+            typeorm_1.TypeOrmModule.forFeature([todo_entity_1.TodoEntity]),
+        ],
         controllers: [todolist_controller_1.TodolistController],
-        providers: [todolist_service_1.TodolistService]
+        providers: [
+            todolist_service_1.TodolistService,
+            ...CommandHandlers,
+        ],
     })
 ], TodolistModule);
 //# sourceMappingURL=todolist.module.js.map

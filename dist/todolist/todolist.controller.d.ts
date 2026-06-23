@@ -1,11 +1,13 @@
 import { TodolistService } from "./todolist.service";
 import { CreateDto } from './dto/create.dto';
+import { CommandBus } from "@nestjs/cqrs";
 export declare class TodolistController {
     private readonly todoService;
-    constructor(todoService: TodolistService);
+    private readonly commandBus;
+    constructor(todoService: TodolistService, commandBus: CommandBus);
     getAllTasks(): Promise<{}>;
     getTaskById(id: number): Promise<{}>;
-    createTodo(bodyPara: CreateDto): Promise<CreateDto & import("./Entity/todo.entity").TodoEntity>;
+    createTodo(bodyPara: CreateDto): Promise<any>;
     deleteTask(id: number): Promise<{
         status: number;
         message: string;

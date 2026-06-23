@@ -1,10 +1,13 @@
 import { Controller, Get, Post, Param, Body, Delete, Put, ParseIntPipe } from '@nestjs/common';
 import { TodolistService } from "./todolist.service";
 import { CreateDto } from './dto/create.dto';
+import { CommandBus } from "@nestjs/cqrs";
+import { CreateTodoCommand } from './commands/impl/create-todo.command';
 
 @Controller('todolist')
 export class TodolistController {
-    constructor(private readonly todoService: TodolistService) { }
+    constructor(private readonly todoService: TodolistService,
+        private readonly commandBus: CommandBus) { }
 
     @Get('all')
     public async getAllTasks() {
@@ -18,8 +21,11 @@ export class TodolistController {
 
     @Post('create')
     public async createTodo(@Body() bodyPara: CreateDto) {
-        return this.todoService.createTask(bodyPara);
+        return this.commandBus.execute(
+            new CreateTodoCommand(bodyPara),
+        );
     }
+    
     @Delete(':id')
     public async deleteTask(@Param('id', ParseIntPipe) id: number) {
         return this.todoService.deleteTask(id);

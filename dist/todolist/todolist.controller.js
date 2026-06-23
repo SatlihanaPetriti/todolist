@@ -16,10 +16,14 @@ exports.TodolistController = void 0;
 const common_1 = require("@nestjs/common");
 const todolist_service_1 = require("./todolist.service");
 const create_dto_1 = require("./dto/create.dto");
+const cqrs_1 = require("@nestjs/cqrs");
+const create_todo_command_1 = require("./commands/impl/create-todo.command");
 let TodolistController = class TodolistController {
     todoService;
-    constructor(todoService) {
+    commandBus;
+    constructor(todoService, commandBus) {
         this.todoService = todoService;
+        this.commandBus = commandBus;
     }
     async getAllTasks() {
         return this.todoService.getAllTasks();
@@ -28,7 +32,7 @@ let TodolistController = class TodolistController {
         return this.todoService.getTaskById(id);
     }
     async createTodo(bodyPara) {
-        return this.todoService.createTask(bodyPara);
+        return this.commandBus.execute(new create_todo_command_1.CreateTodoCommand(bodyPara));
     }
     async deleteTask(id) {
         return this.todoService.deleteTask(id);
@@ -75,6 +79,7 @@ __decorate([
 ], TodolistController.prototype, "updateTask", null);
 exports.TodolistController = TodolistController = __decorate([
     (0, common_1.Controller)('todolist'),
-    __metadata("design:paramtypes", [todolist_service_1.TodolistService])
+    __metadata("design:paramtypes", [todolist_service_1.TodolistService,
+        cqrs_1.CommandBus])
 ], TodolistController);
 //# sourceMappingURL=todolist.controller.js.map

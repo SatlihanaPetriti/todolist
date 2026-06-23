@@ -2,12 +2,13 @@ import { Module } from '@nestjs/common';
 import { TodolistModule } from './todolist/todolist.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TodoEntity } from './todolist/Entity/todo.entity';
-
+import { CqrsModule } from '@nestjs/cqrs';
 import { CacheModule } from '@nestjs/cache-manager';
 import KeyvRedis from '@keyv/redis';
 
 @Module({
   imports: [
+    CqrsModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',
@@ -24,7 +25,7 @@ import KeyvRedis from '@keyv/redis';
       stores: [
         new KeyvRedis('redis://localhost:6379'),
       ],
-      ttl: 5000,
+      ttl: 50000,
     }),
 
     TodolistModule,

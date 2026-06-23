@@ -11,6 +11,7 @@ const common_1 = require("@nestjs/common");
 const todolist_module_1 = require("./todolist/todolist.module");
 const typeorm_1 = require("@nestjs/typeorm");
 const todo_entity_1 = require("./todolist/Entity/todo.entity");
+const cqrs_1 = require("@nestjs/cqrs");
 const cache_manager_1 = require("@nestjs/cache-manager");
 const redis_1 = require("@keyv/redis");
 let AppModule = class AppModule {
@@ -19,6 +20,7 @@ exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
+            cqrs_1.CqrsModule.forRoot(),
             typeorm_1.TypeOrmModule.forRoot({
                 type: 'mysql',
                 host: 'localhost',
@@ -34,7 +36,7 @@ exports.AppModule = AppModule = __decorate([
                 stores: [
                     new redis_1.default('redis://localhost:6379'),
                 ],
-                ttl: 5000,
+                ttl: 50000,
             }),
             todolist_module_1.TodolistModule,
         ],
