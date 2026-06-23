@@ -1,22 +1,29 @@
 import { Controller, Get, Post, Param, Body, Delete, Put, ParseIntPipe } from '@nestjs/common';
 import { TodolistService } from "./todolist.service";
 import { CreateDto } from './dto/create.dto';
-import { CommandBus } from "@nestjs/cqrs";
+import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { CreateTodoCommand } from './commands/impl/create-todo.command';
+import { GetAllTodosQuery } from './queries/impl/get-all-todos.query';
+import { GetTodoByIdQuery } from './queries/impl/get-todo-by-id.query';
+import { DeleteTodoCommand } from './commands/impl/delete-todo.command';
+import { UpdateTodoCommand } from './commands/impl/update-todo.command';
 
 @Controller('todolist')
 export class TodolistController {
     constructor(private readonly todoService: TodolistService,
-        private readonly commandBus: CommandBus) { }
+        private readonly commandBus: CommandBus,
+        private readonly queryBus: QueryBus) { }
 
     @Get('all')
-    public async getAllTasks() {
-        return this.todoService.getAllTasks();
+    public async getAllTodos() {
+        return this.queryBus.execute(new GetAllTodosQuery());
     }
 
     @Get(':id')
     public async getTaskById(@Param('id', ParseIntPipe) id: number) {
-        return this.todoService.getTaskById(id);
+        return this.queryBus.execute(
+            new GetTodoByIdQuery(id),
+        );
     }
 
     @Post('create')
@@ -25,15 +32,19 @@ export class TodolistController {
             new CreateTodoCommand(bodyPara),
         );
     }
-    
+
     @Delete(':id')
     public async deleteTask(@Param('id', ParseIntPipe) id: number) {
-        return this.todoService.deleteTask(id);
+        return this.commandBus.execute(
+            new DeleteTodoCommand(id),
+        );
     }
 
     @Put(':id')
     public async updateTask(@Param('id', ParseIntPipe) id: number, @Body() data: CreateDto) {
-        return this.todoService.updateTask(id, data);
+        return this.commandBus.execute(
+            new UpdateTodoCommand(id, data),
+        );
     }
 
 }

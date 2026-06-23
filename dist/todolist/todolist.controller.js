@@ -18,15 +18,18 @@ const todolist_service_1 = require("./todolist.service");
 const create_dto_1 = require("./dto/create.dto");
 const cqrs_1 = require("@nestjs/cqrs");
 const create_todo_command_1 = require("./commands/impl/create-todo.command");
+const get_all_todos_query_1 = require("./queries/impl/get-all-todos.query");
 let TodolistController = class TodolistController {
     todoService;
     commandBus;
-    constructor(todoService, commandBus) {
+    queryBus;
+    constructor(todoService, commandBus, queryBus) {
         this.todoService = todoService;
         this.commandBus = commandBus;
+        this.queryBus = queryBus;
     }
-    async getAllTasks() {
-        return this.todoService.getAllTasks();
+    async getAllTodos() {
+        return this.queryBus.execute(new get_all_todos_query_1.GetAllTodosQuery());
     }
     async getTaskById(id) {
         return this.todoService.getTaskById(id);
@@ -47,7 +50,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
-], TodolistController.prototype, "getAllTasks", null);
+], TodolistController.prototype, "getAllTodos", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
@@ -80,6 +83,7 @@ __decorate([
 exports.TodolistController = TodolistController = __decorate([
     (0, common_1.Controller)('todolist'),
     __metadata("design:paramtypes", [todolist_service_1.TodolistService,
-        cqrs_1.CommandBus])
+        cqrs_1.CommandBus,
+        cqrs_1.QueryBus])
 ], TodolistController);
 //# sourceMappingURL=todolist.controller.js.map
