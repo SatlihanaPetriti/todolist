@@ -14,8 +14,18 @@ const typeorm_1 = require("@nestjs/typeorm");
 const todo_entity_1 = require("./Entity/todo.entity");
 const cqrs_1 = require("@nestjs/cqrs");
 const create_todo_handler_1 = require("./commands/handlers/create-todo.handler");
+const get_todo_by_id_handler_1 = require("./queries/handlers/get-todo-by-id.handler");
+const update_todo_handler_1 = require("./commands/handlers/update-todo.handler");
+const delete_todo_handler_1 = require("./commands/handlers/delete-todo.handler");
+const get_all_todos_handler_1 = require("./queries/handlers/get-all-todos.handler");
 const CommandHandlers = [
     create_todo_handler_1.CreateTodoHandler,
+    delete_todo_handler_1.DeleteTodoHandler,
+    update_todo_handler_1.UpdateTodoHandler,
+];
+const QueryHandlers = [
+    get_todo_by_id_handler_1.GetTodoByIdHandler,
+    get_all_todos_handler_1.GetAllTodosHandler,
 ];
 let TodolistModule = class TodolistModule {
 };
@@ -30,6 +40,7 @@ exports.TodolistModule = TodolistModule = __decorate([
         providers: [
             todolist_service_1.TodolistService,
             ...CommandHandlers,
+            ...QueryHandlers,
         ],
     })
 ], TodolistModule);

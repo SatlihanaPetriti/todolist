@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
+const config_1 = require("@nestjs/config");
 const todolist_module_1 = require("./todolist/todolist.module");
 const typeorm_1 = require("@nestjs/typeorm");
 const todo_entity_1 = require("./todolist/Entity/todo.entity");
@@ -20,23 +21,34 @@ exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            cqrs_1.CqrsModule.forRoot(),
-            typeorm_1.TypeOrmModule.forRoot({
-                type: 'mysql',
-                host: 'localhost',
-                port: 3306,
-                username: 'root',
-                password: 'Inna1998',
-                database: 'todolist',
-                entities: [todo_entity_1.TodoEntity],
-                synchronize: true,
-            }),
-            cache_manager_1.CacheModule.register({
+            config_1.ConfigModule.forRoot({
                 isGlobal: true,
-                stores: [
-                    new redis_1.default('redis://localhost:6379'),
-                ],
-                ttl: 50000,
+            }),
+            cqrs_1.CqrsModule.forRoot(),
+            typeorm_1.TypeOrmModule.forRootAsync({
+                imports: [config_1.ConfigModule],
+                inject: [config_1.ConfigService],
+                useFactory: (configService) => ({
+                    type: 'mysql',
+                    host: configService.get('DB_HOST'),
+                    port: Number(configService.get('DB_PORT')),
+                    username: configService.get('DB_USERNAME'),
+                    password: configService.get('DB_PASSWORD'),
+                    database: configService.get('DB_DATABASE'),
+                    entities: [todo_entity_1.TodoEntity],
+                    synchronize: true,
+                }),
+            }),
+            cache_manager_1.CacheModule.registerAsync({
+                isGlobal: true,
+                imports: [config_1.ConfigModule],
+                inject: [config_1.ConfigService],
+                useFactory: (configService) => ({
+                    stores: [
+                        new redis_1.default(configService.get('REDIS_URL') || 'redis://localhost:6379'),
+                    ],
+                    ttl: Number(configService.get('CACHE_TTL')) || 50000,
+                }),
             }),
             todolist_module_1.TodolistModule,
         ],

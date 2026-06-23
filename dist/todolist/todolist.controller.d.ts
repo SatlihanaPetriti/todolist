@@ -7,19 +7,8 @@ export declare class TodolistController {
     private readonly queryBus;
     constructor(todoService: TodolistService, commandBus: CommandBus, queryBus: QueryBus);
     getAllTodos(): Promise<any>;
-    getTaskById(id: number): Promise<{}>;
+    getTaskById(id: number): Promise<any>;
     createTodo(bodyPara: CreateDto): Promise<any>;
-    deleteTask(id: number): Promise<{
-        status: number;
-        message: string;
-    }>;
-    updateTask(id: number, data: CreateDto): Promise<{
-        status: number;
-        message: string;
-        result: {
-            title: string;
-            description: string;
-            id: number;
-        };
-    }>;
+    deleteTask(id: number): Promise<any>;
+    updateTask(id: number, data: CreateDto): Promise<any>;
 }

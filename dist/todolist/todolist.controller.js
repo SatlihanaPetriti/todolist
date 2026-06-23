@@ -19,6 +19,9 @@ const create_dto_1 = require("./dto/create.dto");
 const cqrs_1 = require("@nestjs/cqrs");
 const create_todo_command_1 = require("./commands/impl/create-todo.command");
 const get_all_todos_query_1 = require("./queries/impl/get-all-todos.query");
+const get_todo_by_id_query_1 = require("./queries/impl/get-todo-by-id.query");
+const delete_todo_command_1 = require("./commands/impl/delete-todo.command");
+const update_todo_command_1 = require("./commands/impl/update-todo.command");
 let TodolistController = class TodolistController {
     todoService;
     commandBus;
@@ -32,16 +35,16 @@ let TodolistController = class TodolistController {
         return this.queryBus.execute(new get_all_todos_query_1.GetAllTodosQuery());
     }
     async getTaskById(id) {
-        return this.todoService.getTaskById(id);
+        return this.queryBus.execute(new get_todo_by_id_query_1.GetTodoByIdQuery(id));
     }
     async createTodo(bodyPara) {
         return this.commandBus.execute(new create_todo_command_1.CreateTodoCommand(bodyPara));
     }
     async deleteTask(id) {
-        return this.todoService.deleteTask(id);
+        return this.commandBus.execute(new delete_todo_command_1.DeleteTodoCommand(id));
     }
     async updateTask(id, data) {
-        return this.todoService.updateTask(id, data);
+        return this.commandBus.execute(new update_todo_command_1.UpdateTodoCommand(id, data));
     }
 };
 exports.TodolistController = TodolistController;
