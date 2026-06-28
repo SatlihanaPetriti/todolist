@@ -45,7 +45,7 @@ exports.AppModule = AppModule = __decorate([
                 inject: [config_1.ConfigService],
                 useFactory: (configService) => ({
                     stores: [
-                        new redis_1.default(configService.get('REDIS_URL') || 'redis://localhost:6379'),
+                        new redis_1.default(configService.get('REDIS_URL')),
                     ],
                     ttl: Number(configService.get('CACHE_TTL')) || 50000,
                 }),

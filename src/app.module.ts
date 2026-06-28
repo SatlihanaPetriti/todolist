@@ -14,7 +14,6 @@ import KeyvRedis from '@keyv/redis';
     }),
 
     CqrsModule.forRoot(),
-
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -37,7 +36,7 @@ import KeyvRedis from '@keyv/redis';
       useFactory: (configService: ConfigService) => ({
         stores: [
           new KeyvRedis(
-            configService.get<string>('REDIS_URL') || 'redis://localhost:6379',
+            configService.get<string>('REDIS_URL'),
           ),
         ],
         ttl: Number(configService.get<string>('CACHE_TTL')) || 50000,
