@@ -1,17 +1,15 @@
 import { Inject, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CommandHandler } from '@nestjs/cqrs';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { Cache } from 'cache-manager';
-import { TodoEntity } from '../../Entity/todo.entity';
 import { DeleteTodoCommand } from '../impl/delete-todo.command';
+import { TODO_REPOSITORY, ITodoRepository } from 'src/todolist/repositories/todo.repository.interface';
 
 @CommandHandler(DeleteTodoCommand)
 export class DeleteTodoHandler {
     constructor(
-        @InjectRepository(TodoEntity)
-        private readonly todoRepository: Repository<TodoEntity>,
+        @Inject(TODO_REPOSITORY)
+        private readonly todoRepository: ITodoRepository,
 
         @Inject(CACHE_MANAGER)
         private readonly cacheManager: Cache,
@@ -19,14 +17,16 @@ export class DeleteTodoHandler {
 
     async execute(command: DeleteTodoCommand) {
         const { id } = command;
-        const task = await this.todoRepository.findOne({
-            where: { id },
-        });
+
+        const task = await this.todoRepository.findById(id);
+
         if (!task) {
             throw new NotFoundException(`Task with ID ${id} not found`);
         }
+
         try {
             await this.todoRepository.delete(id);
+
             await this.cacheManager.del(`task:${id}`);
             await this.cacheManager.del('tasks');
 

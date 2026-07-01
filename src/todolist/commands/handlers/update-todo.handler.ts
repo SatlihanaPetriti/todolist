@@ -1,17 +1,15 @@
-import {Inject, InternalServerErrorException,NotFoundException} from '@nestjs/common';
+import { Inject, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CommandHandler } from '@nestjs/cqrs';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { Cache } from 'cache-manager';
-import { TodoEntity } from '../../Entity/todo.entity';
 import { UpdateTodoCommand } from '../impl/update-todo.command';
+import { ITodoRepository, TODO_REPOSITORY } from 'src/todolist/repositories/todo.repository.interface';
 
 @CommandHandler(UpdateTodoCommand)
 export class UpdateTodoHandler {
     constructor(
-        @InjectRepository(TodoEntity)
-        private readonly todoRepository: Repository<TodoEntity>,
+        @Inject(TODO_REPOSITORY)
+        private readonly todoRepository: ITodoRepository,
 
         @Inject(CACHE_MANAGER)
         private readonly cacheManager: Cache,
@@ -20,9 +18,7 @@ export class UpdateTodoHandler {
     async execute(command: UpdateTodoCommand) {
         const { id, updateDto } = command;
 
-        const task = await this.todoRepository.findOne({
-            where: { id },
-        });
+        const task = await this.todoRepository.findById(id);
 
         if (!task) {
             throw new NotFoundException(`Task with ID ${id} not found`);
@@ -34,10 +30,7 @@ export class UpdateTodoHandler {
             return {
                 status: 200,
                 message: `Task with ID ${id} updated successfully`,
-                result: {
-                    id,
-                    ...updateDto,
-                },
+                result: { id, ...updateDto, },
             };
         } catch (error) {
             throw new InternalServerErrorException(
