@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Param, Body, Delete, Put, ParseIntPipe } from '@nestjs/common';
-import { TodolistService } from "./todolist.service";
 import { CreateDto } from './dto/create.dto';
+import { UpdateDto } from './dto/update.dto';
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { CreateTodoCommand } from './commands/impl/create-todo.command';
 import { GetAllTodosQuery } from './queries/impl/get-all-todos.query';
@@ -10,7 +10,7 @@ import { UpdateTodoCommand } from './commands/impl/update-todo.command';
 
 @Controller('todolist')
 export class TodolistController {
-    constructor(private readonly todoService: TodolistService,
+    constructor(
         private readonly commandBus: CommandBus,
         private readonly queryBus: QueryBus) { }
 
@@ -41,10 +41,8 @@ export class TodolistController {
     }
 
     @Put(':id')
-    public async updateTask(@Param('id', ParseIntPipe) id: number, @Body() data: CreateDto) {
-        return this.commandBus.execute(
-            new UpdateTodoCommand(id, data),
-        );
+    public async updateTask(@Param('id', ParseIntPipe) id: number, @Body() data: UpdateDto) {
+        return this.commandBus.execute(new UpdateTodoCommand(id, data));
     }
 
 }

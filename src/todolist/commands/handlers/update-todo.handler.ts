@@ -3,7 +3,7 @@ import { CommandHandler } from '@nestjs/cqrs';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { UpdateTodoCommand } from '../impl/update-todo.command';
-import { ITodoRepository, TODO_REPOSITORY } from 'src/todolist/repositories/todo.repository.interface';
+import { ITodoRepository, TODO_REPOSITORY } from '../../repositories/todo.repository.interface';
 
 @CommandHandler(UpdateTodoCommand)
 export class UpdateTodoHandler {
@@ -23,16 +23,17 @@ export class UpdateTodoHandler {
         if (!task) {
             throw new NotFoundException(`Task with ID ${id} not found`);
         }
+
         try {
-            await this.todoRepository.update(id, updateDto);
+            const updated = await this.todoRepository.update(id, updateDto);
             await this.cacheManager.del(`task:${id}`);
             await this.cacheManager.del('tasks');
             return {
                 status: 200,
                 message: `Task with ID ${id} updated successfully`,
-                result: { id, ...updateDto, },
+                result: updated,
             };
-        } catch (error) {
+        } catch (error: any) {
             throw new InternalServerErrorException(
                 `Could not update task with ID ${id}`,
             );

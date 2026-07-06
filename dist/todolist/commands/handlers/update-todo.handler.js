@@ -16,10 +16,8 @@ exports.UpdateTodoHandler = void 0;
 const common_1 = require("@nestjs/common");
 const cqrs_1 = require("@nestjs/cqrs");
 const cache_manager_1 = require("@nestjs/cache-manager");
-const typeorm_1 = require("@nestjs/typeorm");
-const typeorm_2 = require("typeorm");
-const todo_entity_1 = require("../../Entity/todo.entity");
 const update_todo_command_1 = require("../impl/update-todo.command");
+const todo_repository_interface_1 = require("../../repositories/todo.repository.interface");
 let UpdateTodoHandler = class UpdateTodoHandler {
     todoRepository;
     cacheManager;
@@ -29,23 +27,18 @@ let UpdateTodoHandler = class UpdateTodoHandler {
     }
     async execute(command) {
         const { id, updateDto } = command;
-        const task = await this.todoRepository.findOne({
-            where: { id },
-        });
+        const task = await this.todoRepository.findById(id);
         if (!task) {
             throw new common_1.NotFoundException(`Task with ID ${id} not found`);
         }
         try {
-            await this.todoRepository.update(id, updateDto);
+            const updated = await this.todoRepository.update(id, updateDto);
             await this.cacheManager.del(`task:${id}`);
             await this.cacheManager.del('tasks');
             return {
                 status: 200,
                 message: `Task with ID ${id} updated successfully`,
-                result: {
-                    id,
-                    ...updateDto,
-                },
+                result: updated,
             };
         }
         catch (error) {
@@ -56,8 +49,8 @@ let UpdateTodoHandler = class UpdateTodoHandler {
 exports.UpdateTodoHandler = UpdateTodoHandler;
 exports.UpdateTodoHandler = UpdateTodoHandler = __decorate([
     (0, cqrs_1.CommandHandler)(update_todo_command_1.UpdateTodoCommand),
-    __param(0, (0, typeorm_1.InjectRepository)(todo_entity_1.TodoEntity)),
+    __param(0, (0, common_1.Inject)(todo_repository_interface_1.TODO_REPOSITORY)),
     __param(1, (0, common_1.Inject)(cache_manager_1.CACHE_MANAGER)),
-    __metadata("design:paramtypes", [typeorm_2.Repository, Object])
+    __metadata("design:paramtypes", [Object, Object])
 ], UpdateTodoHandler);
 //# sourceMappingURL=update-todo.handler.js.map

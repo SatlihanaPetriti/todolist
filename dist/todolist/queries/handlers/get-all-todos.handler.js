@@ -16,9 +16,7 @@ exports.GetAllTodosHandler = void 0;
 const common_1 = require("@nestjs/common");
 const cqrs_1 = require("@nestjs/cqrs");
 const cache_manager_1 = require("@nestjs/cache-manager");
-const typeorm_1 = require("@nestjs/typeorm");
-const typeorm_2 = require("typeorm");
-const todo_entity_1 = require("../../Entity/todo.entity");
+const todo_repository_interface_1 = require("../../repositories/todo.repository.interface");
 const get_all_todos_query_1 = require("../impl/get-all-todos.query");
 let GetAllTodosHandler = class GetAllTodosHandler {
     todoRepository;
@@ -32,11 +30,10 @@ let GetAllTodosHandler = class GetAllTodosHandler {
             const cachedTasks = await this.cacheManager.get('tasks');
             if (cachedTasks) {
                 console.log('Data from Redis');
-                console.log(cachedTasks);
                 return cachedTasks;
             }
             console.log('Data from MySQL');
-            const result = await this.todoRepository.find();
+            const result = await this.todoRepository.findAll();
             await this.cacheManager.set('tasks', result, 300000);
             return result;
         }
@@ -48,8 +45,8 @@ let GetAllTodosHandler = class GetAllTodosHandler {
 exports.GetAllTodosHandler = GetAllTodosHandler;
 exports.GetAllTodosHandler = GetAllTodosHandler = __decorate([
     (0, cqrs_1.QueryHandler)(get_all_todos_query_1.GetAllTodosQuery),
-    __param(0, (0, typeorm_1.InjectRepository)(todo_entity_1.TodoEntity)),
+    __param(0, (0, common_1.Inject)(todo_repository_interface_1.TODO_REPOSITORY)),
     __param(1, (0, common_1.Inject)(cache_manager_1.CACHE_MANAGER)),
-    __metadata("design:paramtypes", [typeorm_2.Repository, Object])
+    __metadata("design:paramtypes", [Object, Object])
 ], GetAllTodosHandler);
 //# sourceMappingURL=get-all-todos.handler.js.map

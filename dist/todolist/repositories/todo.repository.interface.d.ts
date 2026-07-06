@@ -1,8 +1,7 @@
 import { TodoEntity } from "../Entity/todo.entity";
 import { CreateDto } from '../dto/create.dto';
 import { UpdateDto } from '../dto/update.dto';
-export const TODO_REPOSITORY = 'TODO_REPOSITORY';
-
+export declare const TODO_REPOSITORY = "TODO_REPOSITORY";
 export interface ITodoRepository {
     create(todo: CreateDto): Promise<TodoEntity>;
     findAll(): Promise<TodoEntity[]>;

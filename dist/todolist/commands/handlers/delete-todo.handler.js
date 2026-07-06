@@ -16,10 +16,8 @@ exports.DeleteTodoHandler = void 0;
 const common_1 = require("@nestjs/common");
 const cqrs_1 = require("@nestjs/cqrs");
 const cache_manager_1 = require("@nestjs/cache-manager");
-const typeorm_1 = require("@nestjs/typeorm");
-const typeorm_2 = require("typeorm");
-const todo_entity_1 = require("../../Entity/todo.entity");
 const delete_todo_command_1 = require("../impl/delete-todo.command");
+const todo_repository_interface_1 = require("../../repositories/todo.repository.interface");
 let DeleteTodoHandler = class DeleteTodoHandler {
     todoRepository;
     cacheManager;
@@ -29,14 +27,15 @@ let DeleteTodoHandler = class DeleteTodoHandler {
     }
     async execute(command) {
         const { id } = command;
-        const task = await this.todoRepository.findOne({
-            where: { id },
-        });
+        const task = await this.todoRepository.findById(id);
         if (!task) {
             throw new common_1.NotFoundException(`Task with ID ${id} not found`);
         }
         try {
-            await this.todoRepository.delete(id);
+            const deleted = await this.todoRepository.delete(id);
+            if (!deleted) {
+                throw new common_1.InternalServerErrorException(`Could not delete task with ID ${id}`);
+            }
             await this.cacheManager.del(`task:${id}`);
             await this.cacheManager.del('tasks');
             return {
@@ -52,8 +51,8 @@ let DeleteTodoHandler = class DeleteTodoHandler {
 exports.DeleteTodoHandler = DeleteTodoHandler;
 exports.DeleteTodoHandler = DeleteTodoHandler = __decorate([
     (0, cqrs_1.CommandHandler)(delete_todo_command_1.DeleteTodoCommand),
-    __param(0, (0, typeorm_1.InjectRepository)(todo_entity_1.TodoEntity)),
+    __param(0, (0, common_1.Inject)(todo_repository_interface_1.TODO_REPOSITORY)),
     __param(1, (0, common_1.Inject)(cache_manager_1.CACHE_MANAGER)),
-    __metadata("design:paramtypes", [typeorm_2.Repository, Object])
+    __metadata("design:paramtypes", [Object, Object])
 ], DeleteTodoHandler);
 //# sourceMappingURL=delete-todo.handler.js.map

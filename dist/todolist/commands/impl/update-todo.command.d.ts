@@ -1,6 +1,6 @@
-import { CreateDto } from '../../dto/create.dto';
+import { UpdateDto } from '../../dto/update.dto';
 export declare class UpdateTodoCommand {
     readonly id: number;
-    readonly updateDto: CreateDto;
-    constructor(id: number, updateDto: CreateDto);
+    readonly updateDto: UpdateDto;
+    constructor(id: number, updateDto: UpdateDto);
 }

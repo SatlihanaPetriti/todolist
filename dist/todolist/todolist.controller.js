@@ -14,8 +14,8 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TodolistController = void 0;
 const common_1 = require("@nestjs/common");
-const todolist_service_1 = require("./todolist.service");
 const create_dto_1 = require("./dto/create.dto");
+const update_dto_1 = require("./dto/update.dto");
 const cqrs_1 = require("@nestjs/cqrs");
 const create_todo_command_1 = require("./commands/impl/create-todo.command");
 const get_all_todos_query_1 = require("./queries/impl/get-all-todos.query");
@@ -23,11 +23,9 @@ const get_todo_by_id_query_1 = require("./queries/impl/get-todo-by-id.query");
 const delete_todo_command_1 = require("./commands/impl/delete-todo.command");
 const update_todo_command_1 = require("./commands/impl/update-todo.command");
 let TodolistController = class TodolistController {
-    todoService;
     commandBus;
     queryBus;
-    constructor(todoService, commandBus, queryBus) {
-        this.todoService = todoService;
+    constructor(commandBus, queryBus) {
         this.commandBus = commandBus;
         this.queryBus = queryBus;
     }
@@ -80,13 +78,12 @@ __decorate([
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, create_dto_1.CreateDto]),
+    __metadata("design:paramtypes", [Number, update_dto_1.UpdateDto]),
     __metadata("design:returntype", Promise)
 ], TodolistController.prototype, "updateTask", null);
 exports.TodolistController = TodolistController = __decorate([
     (0, common_1.Controller)('todolist'),
-    __metadata("design:paramtypes", [todolist_service_1.TodolistService,
-        cqrs_1.CommandBus,
+    __metadata("design:paramtypes", [cqrs_1.CommandBus,
         cqrs_1.QueryBus])
 ], TodolistController);
 //# sourceMappingURL=todolist.controller.js.map

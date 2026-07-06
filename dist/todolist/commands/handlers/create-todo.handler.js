@@ -14,14 +14,12 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateTodoHandler = void 0;
 const cqrs_1 = require("@nestjs/cqrs");
-const typeorm_1 = require("@nestjs/typeorm");
-const typeorm_2 = require("typeorm");
-const todo_entity_1 = require("../../Entity/todo.entity");
 const create_todo_command_1 = require("../impl/create-todo.command");
 const http_status_enum_1 = require("@nestjs/common/enums/http-status.enum");
 const http_exception_1 = require("@nestjs/common/exceptions/http.exception");
 const common_1 = require("@nestjs/common");
 const cache_manager_1 = require("@nestjs/cache-manager");
+const todo_repository_interface_1 = require("../../repositories/todo.repository.interface");
 let CreateTodoHandler = class CreateTodoHandler {
     todoRepository;
     cacheManager;
@@ -32,8 +30,7 @@ let CreateTodoHandler = class CreateTodoHandler {
     async execute(command) {
         try {
             const { createDto } = command;
-            const todo = this.todoRepository.create(createDto);
-            const result = await this.todoRepository.save(todo);
+            const result = await this.todoRepository.create(createDto);
             await this.cacheManager.del('tasks');
             return result;
         }
@@ -45,8 +42,8 @@ let CreateTodoHandler = class CreateTodoHandler {
 exports.CreateTodoHandler = CreateTodoHandler;
 exports.CreateTodoHandler = CreateTodoHandler = __decorate([
     (0, cqrs_1.CommandHandler)(create_todo_command_1.CreateTodoCommand),
-    __param(0, (0, typeorm_1.InjectRepository)(todo_entity_1.TodoEntity)),
+    __param(0, (0, common_1.Inject)(todo_repository_interface_1.TODO_REPOSITORY)),
     __param(1, (0, common_1.Inject)(cache_manager_1.CACHE_MANAGER)),
-    __metadata("design:paramtypes", [typeorm_2.Repository, Object])
+    __metadata("design:paramtypes", [Object, Object])
 ], CreateTodoHandler);
 //# sourceMappingURL=create-todo.handler.js.map

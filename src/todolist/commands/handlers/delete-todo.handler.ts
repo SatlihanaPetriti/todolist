@@ -3,7 +3,7 @@ import { CommandHandler } from '@nestjs/cqrs';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { DeleteTodoCommand } from '../impl/delete-todo.command';
-import { TODO_REPOSITORY, ITodoRepository } from 'src/todolist/repositories/todo.repository.interface';
+import { ITodoRepository, TODO_REPOSITORY } from '../../repositories/todo.repository.interface';
 
 @CommandHandler(DeleteTodoCommand)
 export class DeleteTodoHandler {
@@ -25,7 +25,10 @@ export class DeleteTodoHandler {
         }
 
         try {
-            await this.todoRepository.delete(id);
+            const deleted = await this.todoRepository.delete(id);
+            if (!deleted) {
+                throw new InternalServerErrorException(`Could not delete task with ID ${id}`);
+            }
 
             await this.cacheManager.del(`task:${id}`);
             await this.cacheManager.del('tasks');

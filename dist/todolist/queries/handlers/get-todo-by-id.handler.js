@@ -16,9 +16,7 @@ exports.GetTodoByIdHandler = void 0;
 const common_1 = require("@nestjs/common");
 const cqrs_1 = require("@nestjs/cqrs");
 const cache_manager_1 = require("@nestjs/cache-manager");
-const typeorm_1 = require("@nestjs/typeorm");
-const typeorm_2 = require("typeorm");
-const todo_entity_1 = require("../../Entity/todo.entity");
+const todo_repository_interface_1 = require("../../repositories/todo.repository.interface");
 const get_todo_by_id_query_1 = require("../impl/get-todo-by-id.query");
 let GetTodoByIdHandler = class GetTodoByIdHandler {
     todoRepository;
@@ -33,13 +31,10 @@ let GetTodoByIdHandler = class GetTodoByIdHandler {
         const cachedTask = await this.cacheManager.get(cacheKey);
         if (cachedTask) {
             console.log(`Redis: hit ${cacheKey}`);
-            console.log(cachedTask);
             return cachedTask;
         }
         console.log(`Redis: miss ${cacheKey}`);
-        const task = await this.todoRepository.findOne({
-            where: { id },
-        });
+        const task = await this.todoRepository.findById(id);
         if (!task) {
             throw new common_1.NotFoundException(`Task with ID ${id} not found`);
         }
@@ -51,8 +46,8 @@ let GetTodoByIdHandler = class GetTodoByIdHandler {
 exports.GetTodoByIdHandler = GetTodoByIdHandler;
 exports.GetTodoByIdHandler = GetTodoByIdHandler = __decorate([
     (0, cqrs_1.QueryHandler)(get_todo_by_id_query_1.GetTodoByIdQuery),
-    __param(0, (0, typeorm_1.InjectRepository)(todo_entity_1.TodoEntity)),
+    __param(0, (0, common_1.Inject)(todo_repository_interface_1.TODO_REPOSITORY)),
     __param(1, (0, common_1.Inject)(cache_manager_1.CACHE_MANAGER)),
-    __metadata("design:paramtypes", [typeorm_2.Repository, Object])
+    __metadata("design:paramtypes", [Object, Object])
 ], GetTodoByIdHandler);
 //# sourceMappingURL=get-todo-by-id.handler.js.map

@@ -1,9 +1,11 @@
-import { TodoEntity } from "../Entity/todo.entity";
+import { Repository } from 'typeorm';
+import { TodoEntity } from '../Entity/todo.entity';
 import { CreateDto } from '../dto/create.dto';
 import { UpdateDto } from '../dto/update.dto';
-export const TODO_REPOSITORY = 'TODO_REPOSITORY';
-
-export interface ITodoRepository {
+import { ITodoRepository } from './todo.repository.interface';
+export declare class TodoRepository implements ITodoRepository {
+    private readonly ormRepository;
+    constructor(ormRepository: Repository<TodoEntity>);
     create(todo: CreateDto): Promise<TodoEntity>;
     findAll(): Promise<TodoEntity[]>;
     findById(id: number): Promise<TodoEntity | null>;
