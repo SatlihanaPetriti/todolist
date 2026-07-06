@@ -12,38 +12,28 @@ export class GetTodoByIdHandler implements IQueryHandler<GetTodoByIdQuery> {
     constructor(
         @InjectRepository(TodoEntity)
         private readonly todoRepository: Repository<TodoEntity>,
-
         @Inject(CACHE_MANAGER)
         private readonly cacheManager: Cache,
     ) { }
 
     async execute(query: GetTodoByIdQuery) {
         const { id } = query;
-
         const cacheKey = `task:${id}`;
-
         const cachedTask = await this.cacheManager.get(cacheKey);
-
         if (cachedTask) {
             console.log(`Redis: hit ${cacheKey}`);
             console.log(cachedTask);
             return cachedTask;
         }
-
         console.log(`Redis: miss ${cacheKey}`);
-
         const task = await this.todoRepository.findOne({
             where: { id },
         });
-
         if (!task) {
             throw new NotFoundException(`Task with ID ${id} not found`);
         }
-
         await this.cacheManager.set(cacheKey, task, 60000);
-
         console.log(`Redis: ${cacheKey} cached`);
-
         return task;
     }
 }
