@@ -18,7 +18,7 @@ export class TodoRepository implements ITodoRepository {
         return this.ormRepository.save(entity);
     }
 
-   public async findAll(): Promise<TodoEntity[]> {
+    public async findAll(): Promise<TodoEntity[]> {
         return this.ormRepository.find();
     }
 
