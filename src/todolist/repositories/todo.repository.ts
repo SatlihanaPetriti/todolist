@@ -33,6 +33,8 @@ export class TodoRepository implements ITodoRepository {
 
     public async delete(id: number): Promise<boolean> {
         const result = await this.ormRepository.delete(id);
+        console.log('result:', result);
+        console.log('affected:', result.affected);
         return (result.affected ?? 0) > 0;
     }
 }

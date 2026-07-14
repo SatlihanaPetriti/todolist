@@ -38,6 +38,8 @@ let TodoRepository = class TodoRepository {
     }
     async delete(id) {
         const result = await this.ormRepository.delete(id);
+        console.log('result:', result);
+        console.log('affected:', result.affected);
         return (result.affected ?? 0) > 0;
     }
 };

@@ -15,7 +15,7 @@ export class UpdateTodoHandler {
         private readonly cacheManager: Cache,
     ) { }
 
-    async execute(command: UpdateTodoCommand) {
+    public async execute(command: UpdateTodoCommand) {
         const { id, updateDto } = command;
 
         const task = await this.todoRepository.findById(id);

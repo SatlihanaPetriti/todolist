@@ -17,7 +17,7 @@ export class CreateTodoHandler {
         @Inject(CACHE_MANAGER)
         private readonly cacheManager: Cache,
     ) { }
-    async execute(command: CreateTodoCommand) {
+    public async execute(command: CreateTodoCommand) {
         try {
             const { createDto } = command;
 

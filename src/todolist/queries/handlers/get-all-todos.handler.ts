@@ -23,13 +23,9 @@ export class GetAllTodosHandler implements IQueryHandler<GetAllTodosQuery> {
                 console.log('Data from Redis');
                 return cachedTasks;
             }
-
             console.log('Data from MySQL');
-
             const result = await this.todoRepository.findAll();
-
             await this.cacheManager.set('tasks', result, 300000);
-
             return result;
         } catch (error) {
             throw new HttpException(

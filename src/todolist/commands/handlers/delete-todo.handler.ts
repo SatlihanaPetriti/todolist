@@ -15,7 +15,7 @@ export class DeleteTodoHandler {
         private readonly cacheManager: Cache,
     ) { }
 
-    async execute(command: DeleteTodoCommand) {
+    public async execute(command: DeleteTodoCommand) {
         const { id } = command;
 
         const task = await this.todoRepository.findById(id);
