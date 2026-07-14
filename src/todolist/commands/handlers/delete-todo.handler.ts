@@ -31,7 +31,10 @@ export class DeleteTodoHandler {
             }
 
             await this.cacheManager.del(`task:${id}`);
+            console.log(`Cache clean: task:${id}`);
+
             await this.cacheManager.del('tasks');
+            console.log(`Cache clean: tasks`);
 
             return {
                 status: 200,

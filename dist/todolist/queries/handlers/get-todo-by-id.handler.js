@@ -38,7 +38,7 @@ let GetTodoByIdHandler = class GetTodoByIdHandler {
         if (!task) {
             throw new common_1.NotFoundException(`Task with ID ${id} not found`);
         }
-        await this.cacheManager.set(cacheKey, task, 60000);
+        await this.cacheManager.set(cacheKey, task, 300000);
         console.log(`Redis: ${cacheKey} cached`);
         return task;
     }

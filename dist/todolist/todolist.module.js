@@ -19,6 +19,7 @@ const get_todo_by_id_handler_1 = require("./queries/handlers/get-todo-by-id.hand
 const update_todo_handler_1 = require("./commands/handlers/update-todo.handler");
 const delete_todo_handler_1 = require("./commands/handlers/delete-todo.handler");
 const get_all_todos_handler_1 = require("./queries/handlers/get-all-todos.handler");
+const todo_resolver_1 = require("./todo.resolver");
 const CommandHandlers = [
     create_todo_handler_1.CreateTodoHandler,
     delete_todo_handler_1.DeleteTodoHandler,
@@ -45,6 +46,7 @@ exports.TodolistModule = TodolistModule = __decorate([
                 provide: todo_repository_interface_1.TODO_REPOSITORY,
                 useClass: todo_repository_1.TodoRepository,
             },
+            todo_resolver_1.TodoResolver,
         ],
     })
 ], TodolistModule);

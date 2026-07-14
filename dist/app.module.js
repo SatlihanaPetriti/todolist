@@ -15,6 +15,9 @@ const todo_entity_1 = require("./todolist/Entity/todo.entity");
 const cqrs_1 = require("@nestjs/cqrs");
 const cache_manager_1 = require("@nestjs/cache-manager");
 const redis_1 = require("@keyv/redis");
+const graphql_1 = require("@nestjs/graphql");
+const apollo_1 = require("@nestjs/apollo");
+const path_1 = require("path");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -25,6 +28,11 @@ exports.AppModule = AppModule = __decorate([
                 isGlobal: true,
             }),
             cqrs_1.CqrsModule.forRoot(),
+            graphql_1.GraphQLModule.forRoot({
+                driver: apollo_1.ApolloDriver,
+                autoSchemaFile: (0, path_1.join)(process.cwd(), 'src/schema.gql'),
+                sortSchema: true,
+            }),
             typeorm_1.TypeOrmModule.forRootAsync({
                 imports: [config_1.ConfigModule],
                 inject: [config_1.ConfigService],

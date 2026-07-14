@@ -6,6 +6,9 @@ import { TodoEntity } from './todolist/Entity/todo.entity';
 import { CqrsModule } from '@nestjs/cqrs';
 import { CacheModule } from '@nestjs/cache-manager';
 import KeyvRedis from '@keyv/redis';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -14,6 +17,13 @@ import KeyvRedis from '@keyv/redis';
     }),
 
     CqrsModule.forRoot(),
+
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      sortSchema: true,
+    }),
+
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -39,7 +49,10 @@ import KeyvRedis from '@keyv/redis';
             configService.get<string>('REDIS_URL'),
           ),
         ],
-        ttl: Number(configService.get<string>('CACHE_TTL')) || 50000,
+        ttl:
+          Number(
+            configService.get<string>('CACHE_TTL'),
+          ) || 50000,
       }),
     }),
 

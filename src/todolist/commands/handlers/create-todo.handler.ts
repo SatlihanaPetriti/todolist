@@ -20,11 +20,8 @@ export class CreateTodoHandler {
     public async execute(command: CreateTodoCommand) {
         try {
             const { createDto } = command;
-
             const result = await this.todoRepository.create(createDto);
-
             await this.cacheManager.del('tasks');
-
             return result;
         } catch (error) {
             throw new HttpException('We could not create a new task', HttpStatus.INTERNAL_SERVER_ERROR);

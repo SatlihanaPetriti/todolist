@@ -37,7 +37,9 @@ let DeleteTodoHandler = class DeleteTodoHandler {
                 throw new common_1.InternalServerErrorException(`Could not delete task with ID ${id}`);
             }
             await this.cacheManager.del(`task:${id}`);
+            console.log(`Cache clean: task:${id}`);
             await this.cacheManager.del('tasks');
+            console.log(`Cache clean: tasks`);
             return {
                 status: 200,
                 message: `Task with ID ${id} deleted successfully`,

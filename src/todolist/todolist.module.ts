@@ -10,6 +10,7 @@ import { GetTodoByIdHandler } from './queries/handlers/get-todo-by-id.handler';
 import { UpdateTodoHandler } from './commands/handlers/update-todo.handler';
 import { DeleteTodoHandler } from './commands/handlers/delete-todo.handler';
 import { GetAllTodosHandler } from './queries/handlers/get-all-todos.handler';
+import { TodoResolver } from './todo.resolver';
 
 const CommandHandlers = [
   CreateTodoHandler,
@@ -35,6 +36,7 @@ const QueryHandlers = [
       provide: TODO_REPOSITORY,
       useClass: TodoRepository,
     },
+    TodoResolver,
   ],
 })
 export class TodolistModule { }

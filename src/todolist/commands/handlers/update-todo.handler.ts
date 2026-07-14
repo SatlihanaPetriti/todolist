@@ -17,13 +17,10 @@ export class UpdateTodoHandler {
 
     public async execute(command: UpdateTodoCommand) {
         const { id, updateDto } = command;
-
         const task = await this.todoRepository.findById(id);
-
         if (!task) {
             throw new NotFoundException(`Task with ID ${id} not found`);
         }
-
         try {
             const updated = await this.todoRepository.update(id, updateDto);
             await this.cacheManager.del(`task:${id}`);

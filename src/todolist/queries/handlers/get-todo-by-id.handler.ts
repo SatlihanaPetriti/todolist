@@ -17,6 +17,7 @@ export class GetTodoByIdHandler implements IQueryHandler<GetTodoByIdQuery> {
     public async execute(query: GetTodoByIdQuery) {
         const { id } = query;
         const cacheKey = `task:${id}`;
+
         const cachedTask = await this.cacheManager.get(cacheKey);
         if (cachedTask) {
             console.log(`Redis: hit ${cacheKey}`);
@@ -27,7 +28,7 @@ export class GetTodoByIdHandler implements IQueryHandler<GetTodoByIdQuery> {
         if (!task) {
             throw new NotFoundException(`Task with ID ${id} not found`);
         }
-        await this.cacheManager.set(cacheKey, task, 60000);
+        await this.cacheManager.set(cacheKey, task, 300000);
         console.log(`Redis: ${cacheKey} cached`);
         return task;
     }
