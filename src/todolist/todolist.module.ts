@@ -11,6 +11,7 @@ import { UpdateTodoHandler } from './commands/handlers/update-todo.handler';
 import { DeleteTodoHandler } from './commands/handlers/delete-todo.handler';
 import { GetAllTodosHandler } from './queries/handlers/get-all-todos.handler';
 import { TodoResolver } from './todo.resolver';
+import { TodoGateway } from 'src/todo.gateway';
 
 const CommandHandlers = [
   CreateTodoHandler,
@@ -37,6 +38,7 @@ const QueryHandlers = [
       useClass: TodoRepository,
     },
     TodoResolver,
+    TodoGateway,
   ],
 })
 export class TodolistModule { }
